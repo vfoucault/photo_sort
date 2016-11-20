@@ -25,10 +25,6 @@ class PhotoClasser():
         self.logger.info("Init photo classer")
 
 
-    # @staticmethod
-    # def check_dir_for_date(dateobj):
-    #     return strdate
-
     def get_files_in_src(self):
         files = glob.glob("%s/*" % self.srcdir)
         self.files = files

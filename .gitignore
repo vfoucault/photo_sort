@@ -90,9 +90,9 @@ ENV/
 # Rope project settings
 .ropeproject
 
-/PhotoClasser/dst/
-/PhotoClasser/src/
+/PhotoClasser.old/dst/
+/PhotoClasser.old/src/
 /.idea/
 /photo_sort.iml
 .DS_Store
-PhotoClasser/.DS_Store
+PhotoClasser.old/.DS_Store

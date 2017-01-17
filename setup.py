@@ -8,5 +8,6 @@ setup(name='photo_sort',
       author='Vianney Foucault',
       author_email='vianney.foucault@gmail.com',
       url='',
-      packages=['PhotoClasser']
+      test_require=['PyHamCrest', 'unittest'],
+      packages=['photo']
      )

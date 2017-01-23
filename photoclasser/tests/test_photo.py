@@ -1,10 +1,12 @@
 import unittest
 from pprint import pprint
+import os
 
+import shutil
 from hamcrest import *
 from datetime import datetime
 from photoclasser.photo import Photo, PhotoError
-from photoclasser.importer import Importer
+from photoclasser.photo_classer import PhotoClasser
 
 from mock import mock, patch
 
@@ -27,37 +29,40 @@ class PhotoTester(unittest.TestCase):
             Photo('not_existing_photo')
 
 
-class ImporterTester(unittest.TestCase):
+class PhotoClasserTester(unittest.TestCase):
 
-    def test_importer_init(self):
+    def setUp(self):
+        if os.path.exists('photoclasser/tests/resources/destfolder'):
+            shutil.rmtree('photoclasser/tests/resources/destfolder')
+
+
+    def test_classer_init(self):
 
         # Given
-        photo = Photo('photoclasser/tests/resources/folder1/20170115_155700.jpg')
 
         # When
-        importer = Importer(photo, '/somewhere', format_out='%Y%m%d', create_dest=True, move_file=False)
+        classer = PhotoClasser('photoclasser/tests/resources/folder1', import_to='photoclasser/test/resources/destfolder',
+                               create_folder=True, format_folder='%Y%m%d')
 
         # Then
-        assert_that(importer.full_dest_path, is_('/somewhere/20170115'))
-        assert_that(importer.dest_exists, is_(False))
+        assert_that(classer.photo_count, is_(3))
+        assert_that(classer.is_dest_exists, is_(False))
+        assert_that(classer.photos[0], is_(instance_of(Photo)))
 
-    @patch('os.mkdir')
-    @patch('shutil.copy2')
-    def test_importer_init(self, mock_os_mkdir, mock_copy2):
+
+    def test_classer_copy(self):
         # Given
-        mock_os_mkdir.returnvalue = True
-        mock_copy2.returnvalue = True
-        toto = mock.MagicMock()
-        toto.method_calls
-        photo = Photo('photoclasser/tests/resources/folder1/20170115_155700.jpg')
-        importer = Importer(photo, '/somewhere', format_out='%Y%m%d', create_dest=True, move_file=False)
+        classer = PhotoClasser('photoclasser/tests/resources/folder1', import_to='photoclasser/tests/resources/destfolder',
+                               create_folder=True, format_folder='%Y%m%d')
 
         # When
-        importer.run()
+        classer.run_importer()
 
         # Then
-        pprint(mock_copy2.method_calls)
-        pprint(mock_os_mkdir.methos_calls)
-
+        assert_that(os.path.exists('photoclasser/tests/resources/destfolder'), is_(True))
+        assert_that(os.path.exists('photoclasser/tests/resources/destfolder/20170115'), is_(True))
+        assert_that(os.path.exists('photoclasser/tests/resources/destfolder/20170115/20170115_155700.jpg'), is_(True))
+        assert_that(os.path.exists('photoclasser/tests/resources/destfolder/20170108'), is_(True))
+        assert_that(os.path.exists('photoclasser/tests/resources/destfolder/20170108/20170108_172851.jpg'), is_(True))
 
 
